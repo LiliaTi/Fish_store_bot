@@ -1,11 +1,8 @@
 import requests
-from pprint import pprint
 import os
-from dotenv import load_dotenv
 
 
 def get_access_token():
-    load_dotenv()
     data = {
         'client_id': os.getenv('MOLTIN_CLIENT_ID'),
         'client_secret': os.getenv('MOLTIN_CLIENT_SECRET'),

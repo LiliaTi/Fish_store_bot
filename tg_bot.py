@@ -10,7 +10,7 @@ from telegram.ext import CallbackQueryHandler, CommandHandler, MessageHandler
 import utils
 
 _database = None
-load_dotenv()
+
 
 
 def start(bot, update):
@@ -57,9 +57,11 @@ def handle_menu(bot, update):
 
 def handle_description(bot, update):
     query = update.callback_query
-    info = query.data.split(', ')
-
-    if info[0] == 'back':
+    info_list = query.data.split(', ')
+    if len(info_list) == 2:
+        weight, product_id = info_list
+    
+    if info_list == ['back']:
         products = moltin.get_products()
         keyboard = [[InlineKeyboardButton(product['name'], callback_data=product['id'])] for product in products]
         keyboard.append([InlineKeyboardButton('Корзина', callback_data='cart')])
@@ -72,20 +74,20 @@ def handle_description(bot, update):
                            message_id=query.message.message_id)
         return "HANDLE_MENU"
 
-    elif info[0] == 'cart':
+    elif info_list == ['cart']:
         utils.show_cart(query, bot, update)
         return "HANDLE_CART"
-    elif info[0] == '1kg':
+    elif weight == '1kg':
         moltin.add_product_to_cart(cart_id=query.message.chat_id,
-                                   product_id=info[1],
+                                   product_id=product_id,
                                    product_amount=1)
-    elif info[0] == '5kg':
+    elif weight == '5kg':
         moltin.add_product_to_cart(cart_id=query.message.chat_id,
-                                   product_id=info[1],
+                                   product_id=product_id,
                                    product_amount=5)
-    elif info[0] == '10kg':
+    elif weight == '10kg':
         moltin.add_product_to_cart(cart_id=query.message.chat_id,
-                                   product_id=info[1],
+                                   product_id=product_id,
                                    product_amount=10)
 
 
@@ -171,6 +173,7 @@ def error_callback(bot, update, error):
 
 
 if __name__ == '__main__':
+    load_dotenv()
     token = os.getenv("TG_BOT_TOKEN")
     updater = Updater(token)
     dispatcher = updater.dispatcher
