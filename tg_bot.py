@@ -60,8 +60,10 @@ def handle_description(bot, update):
     info_list = query.data.split(', ')
     if len(info_list) == 2:
         weight, product_id = info_list
-    
-    if info_list == ['back']:
+    else:
+        info = info_list.pop()
+
+    if info == 'back':
         products = moltin.get_products()
         keyboard = [[InlineKeyboardButton(product['name'], callback_data=product['id'])] for product in products]
         keyboard.append([InlineKeyboardButton('Корзина', callback_data='cart')])
@@ -74,7 +76,7 @@ def handle_description(bot, update):
                            message_id=query.message.message_id)
         return "HANDLE_MENU"
 
-    elif info_list == ['cart']:
+    elif info == 'cart':
         utils.show_cart(query, bot, update)
         return "HANDLE_CART"
     elif weight == '1kg':
