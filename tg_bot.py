@@ -60,37 +60,37 @@ def handle_description(bot, update):
     info_list = query.data.split(', ')
     if len(info_list) == 2:
         weight, product_id = info_list
+        if weight == '1kg':
+            moltin.add_product_to_cart(cart_id=query.message.chat_id,
+                                       product_id=product_id,
+                                       product_amount=1)
+        elif weight == '5kg':
+            moltin.add_product_to_cart(cart_id=query.message.chat_id,
+                                       product_id=product_id,
+                                       product_amount=5)
+        elif weight == '10kg':
+            moltin.add_product_to_cart(cart_id=query.message.chat_id,
+                                       product_id=product_id,
+                                       product_amount=10)
     else:
         info = info_list.pop()
 
-    if info == 'back':
-        products = moltin.get_products()
-        keyboard = [[InlineKeyboardButton(product['name'], callback_data=product['id'])] for product in products]
-        keyboard.append([InlineKeyboardButton('Корзина', callback_data='cart')])
-        reply_markup = InlineKeyboardMarkup(keyboard)
+        if info == 'back':
+            products = moltin.get_products()
+            keyboard = [[InlineKeyboardButton(product['name'], callback_data=product['id'])] for product in products]
+            keyboard.append([InlineKeyboardButton('Корзина', callback_data='cart')])
+            reply_markup = InlineKeyboardMarkup(keyboard)
 
-        bot.send_message(text='Please choose:',
-                         reply_markup=reply_markup,
-                         chat_id=query.message.chat_id)
-        bot.delete_message(chat_id=query.message.chat_id,
-                           message_id=query.message.message_id)
-        return "HANDLE_MENU"
+            bot.send_message(text='Please choose:',
+                             reply_markup=reply_markup,
+                             chat_id=query.message.chat_id)
+            bot.delete_message(chat_id=query.message.chat_id,
+                               message_id=query.message.message_id)
+            return "HANDLE_MENU"
 
-    elif info == 'cart':
-        utils.show_cart(query, bot, update)
-        return "HANDLE_CART"
-    elif weight == '1kg':
-        moltin.add_product_to_cart(cart_id=query.message.chat_id,
-                                   product_id=product_id,
-                                   product_amount=1)
-    elif weight == '5kg':
-        moltin.add_product_to_cart(cart_id=query.message.chat_id,
-                                   product_id=product_id,
-                                   product_amount=5)
-    elif weight == '10kg':
-        moltin.add_product_to_cart(cart_id=query.message.chat_id,
-                                   product_id=product_id,
-                                   product_amount=10)
+        elif info == 'cart':
+            utils.show_cart(query, bot, update)
+            return "HANDLE_CART"
 
 
 def handle_cart(bot, update):
